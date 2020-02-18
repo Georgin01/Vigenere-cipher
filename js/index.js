@@ -4,13 +4,25 @@ const key = document.getElementById('key');
 const message = document.getElementById('message');
 const decode = document.getElementById('decode');
 
+//Функция для проверки ключа. Ключ должен включать исключительно английские буквы.
+//Символы и знаки - запрещены!
+function isalpha(str) {
+    return (/^[a-zA-Z]+$/).test(str);
+}
+
 function vigenere(input) {
     let text, key, result = '';
 
     //Проверяем аргумент функции. Если аргумент - объект присваиваем зарание объявленные переменные
     if (typeof input === 'object'){
-        text = input.msg;
-        key = input.key;
+        if (typeof input.key !== 'string' || !isalpha(input.key)){
+            result = `Invalid keyword. Must be string and can only contain eng letters.`;
+            return result;
+        }
+        else {
+            text = input.msg;
+            key = input.key.toLowerCase();
+        }
     }
     else {
         result = 'Error!';
@@ -32,13 +44,13 @@ message.addEventListener("input", function(){
     let value = this.value;
     output.textContent = vigenere({
         msg: value,
-        shift: key.value
+        key: key.value
     });
 });
 key.addEventListener("keyup", function(){
-    let value = Number(this.value);
+    let value = this.value;
     output.textContent = vigenere({
         msg: message.value,
-        shift: value
+        key: value
     });
 });
