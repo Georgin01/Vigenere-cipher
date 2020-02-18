@@ -40,6 +40,20 @@ function vigenere(input) {
     const numbers = '0123456789'.split('');
     const chars = '-=~\"\'#$%&*^:<>?/!{(|)}.\\, '.split('');
 
+    //Функция для кодировки. Возвращает шифрованный символ исходя из входных данных
+    function encoding(arr, char){
+        //Формула : С[i] = (M[i] + K[i]) % N
+        //С[i] - симфол шифра, M[i] - символ входящего текста, К[i] - символ ключа, N - длинна масива
+        return arr[(arr.indexOf(char) + engAlphabetLow.indexOf(key[key_iterator])) % arr.length];
+    }
+
+    //Функция для декодирования. Возвращает розшифрованный символ исходя из входных данных
+    function decoding(arr, char){
+        //Формула : С[i] = (M[i] + N - K[i]) % N
+        //С[i] - симфол розшифровки, M[i] - символ шифра, К[i] - символ ключа, N - длинна масива
+        return arr[(arr.indexOf(char) + arr.length - engAlphabetLow.indexOf(key[key_iterator])) % arr.length];
+    }
+
     //key_iterator служит для перебора символов ключа. Позже в цикле переменная обнуляется по достижению величины равной длинне ключа.
     //Это поможет имиитировать повторение ключа до заполнения им длинны введенного текста (по принципу шифрования Вижинира).
     let key_iterator = 0;
@@ -51,20 +65,20 @@ function vigenere(input) {
 
         //Делаем проверку флага. Если флаг больше 0, то выполняем процес кодирования, в обратном случае - розшифровка.
         if (flag > 0){
-            if (chars.includes(text[i])) result += chars[(chars.indexOf(text[i]) + engAlphabetLow.indexOf(key[key_iterator])) % chars.length];
-            if (numbers.includes(text[i])) result += numbers[(numbers.indexOf(text[i]) + engAlphabetLow.indexOf(key[key_iterator])) % numbers.length];
-            if (engAlphabetLow.includes(text[i])) result += engAlphabetLow[(engAlphabetLow.indexOf(text[i]) + engAlphabetLow.indexOf(key[key_iterator])) % engAlphabetLow.length];
-            if (engAlphabetUp.includes(text[i])) result += engAlphabetUp[(engAlphabetUp.indexOf(text[i]) + engAlphabetLow.indexOf(key[key_iterator])) % engAlphabetUp.length];
-            if (rusAlphabetLow.includes(text[i])) result += rusAlphabetLow[(rusAlphabetLow.indexOf(text[i]) + engAlphabetLow.indexOf(key[key_iterator])) % rusAlphabetLow.length];
-            if (rusAlphabetUp.includes(text[i])) result += rusAlphabetUp[(rusAlphabetUp.indexOf(text[i]) + engAlphabetLow.indexOf(key[key_iterator])) % rusAlphabetUp.length];
+            if (chars.includes(text[i])) result += encoding(chars, text[i]);
+            if (numbers.includes(text[i])) result += encoding(numbers, text[i]);
+            if (engAlphabetLow.includes(text[i])) result += encoding(engAlphabetLow, text[i]);
+            if (engAlphabetUp.includes(text[i])) result += encoding(engAlphabetUp, text[i]);
+            if (rusAlphabetLow.includes(text[i])) result += encoding(rusAlphabetLow, text[i]);
+            if (rusAlphabetUp.includes(text[i])) result += encoding(rusAlphabetUp, text[i]);
 
         }else {
-            if (chars.includes(text[i])) result += chars[(chars.indexOf(text[i]) + chars.length - engAlphabetLow.indexOf(key[key_iterator])) % chars.length];
-            if (numbers.includes(text[i])) result += numbers[(numbers.indexOf(text[i]) + numbers.length - engAlphabetLow.indexOf(key[key_iterator])) % numbers.length];
-            if (engAlphabetLow.includes(text[i])) result += engAlphabetLow[(engAlphabetLow.indexOf(text[i]) + engAlphabetLow.length - engAlphabetLow.indexOf(key[key_iterator])) % engAlphabetLow.length];
-            if (engAlphabetUp.includes(text[i])) result += engAlphabetUp[(engAlphabetUp.indexOf(text[i]) + engAlphabetUp.length - engAlphabetLow.indexOf(key[key_iterator])) % engAlphabetUp.length];
-            if (rusAlphabetLow.includes(text[i])) result += rusAlphabetLow[(rusAlphabetLow.indexOf(text[i]) + rusAlphabetLow.length - engAlphabetLow.indexOf(key[key_iterator])) % rusAlphabetLow.length];
-            if (rusAlphabetUp.includes(text[i])) result += rusAlphabetUp[(rusAlphabetUp.indexOf(text[i]) + rusAlphabetUp.length - engAlphabetLow.indexOf(key[key_iterator])) % rusAlphabetUp.length];
+            if (chars.includes(text[i])) result += decoding(chars, text[i]);
+            if (numbers.includes(text[i])) result += decoding(numbers, text[i]);
+            if (engAlphabetLow.includes(text[i])) result += decoding(engAlphabetLow, text[i]);
+            if (engAlphabetUp.includes(text[i])) result += decoding(engAlphabetUp, text[i]);
+            if (rusAlphabetLow.includes(text[i])) result += decoding(rusAlphabetLow, text[i]);
+            if (rusAlphabetUp.includes(text[i])) result += decoding(rusAlphabetUp, text[i]);
         }
 
         //Обнуление итератора ключа при достижении длинны самого ключа
