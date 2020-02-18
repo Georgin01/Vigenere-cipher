@@ -10,8 +10,9 @@ function isalpha(str) {
     return (/^[a-zA-Z]+$/).test(str);
 }
 
+//Объявление функции шифра Вижинира
 function vigenere(input) {
-    let text, key, result = '';
+    let text, key, flag, result = '';
 
     //Проверяем аргумент функции. Если аргумент - объект присваиваем зарание объявленные переменные.
     //Если ключ аргумента содержит запрещенные знаки - возвращаем ошибку.
@@ -23,6 +24,7 @@ function vigenere(input) {
         else {
             text = input.msg;
             key = input.key.toLowerCase();
+            flag = input.flag
         }
     }
     else {
@@ -46,12 +48,24 @@ function vigenere(input) {
     //добавляем к результатирующей строке символ из того же массива но сдвинутый на номер буквы ключа в английском
     //алфавите и обрабатываем по модулю длинны массива.
     for (let i=0; i<text.length; i++){
-        if (chars.includes(text[i])) result += chars[(chars.indexOf(text[i]) + engAlphabetLow.indexOf(key[key_iterator])) % chars.length];
-        if (numbers.includes(text[i])) result += numbers[(numbers.indexOf(text[i]) + engAlphabetLow.indexOf(key[key_iterator])) % numbers.length];
-        if (engAlphabetLow.includes(text[i])) result += engAlphabetLow[(engAlphabetLow.indexOf(text[i]) + engAlphabetLow.indexOf(key[key_iterator])) % engAlphabetLow.length];
-        if (engAlphabetUp.includes(text[i])) result += engAlphabetUp[(engAlphabetUp.indexOf(text[i]) + engAlphabetLow.indexOf(key[key_iterator])) % engAlphabetUp.length];
-        if (rusAlphabetLow.includes(text[i])) result += rusAlphabetLow[(rusAlphabetLow.indexOf(text[i]) + engAlphabetLow.indexOf(key[key_iterator])) % rusAlphabetLow.length];
-        if (rusAlphabetUp.includes(text[i])) result += rusAlphabetUp[(rusAlphabetUp.indexOf(text[i]) + engAlphabetLow.indexOf(key[key_iterator])) % rusAlphabetUp.length];
+
+        //Делаем проверку флага. Если флаг больше 0, то выполняем процес кодирования, в обратном случае - розшифровка.
+        if (flag > 0){
+            if (chars.includes(text[i])) result += chars[(chars.indexOf(text[i]) + engAlphabetLow.indexOf(key[key_iterator])) % chars.length];
+            if (numbers.includes(text[i])) result += numbers[(numbers.indexOf(text[i]) + engAlphabetLow.indexOf(key[key_iterator])) % numbers.length];
+            if (engAlphabetLow.includes(text[i])) result += engAlphabetLow[(engAlphabetLow.indexOf(text[i]) + engAlphabetLow.indexOf(key[key_iterator])) % engAlphabetLow.length];
+            if (engAlphabetUp.includes(text[i])) result += engAlphabetUp[(engAlphabetUp.indexOf(text[i]) + engAlphabetLow.indexOf(key[key_iterator])) % engAlphabetUp.length];
+            if (rusAlphabetLow.includes(text[i])) result += rusAlphabetLow[(rusAlphabetLow.indexOf(text[i]) + engAlphabetLow.indexOf(key[key_iterator])) % rusAlphabetLow.length];
+            if (rusAlphabetUp.includes(text[i])) result += rusAlphabetUp[(rusAlphabetUp.indexOf(text[i]) + engAlphabetLow.indexOf(key[key_iterator])) % rusAlphabetUp.length];
+
+        }else {
+            if (chars.includes(text[i])) result += chars[(chars.indexOf(text[i]) + chars.length - engAlphabetLow.indexOf(key[key_iterator])) % chars.length];
+            if (numbers.includes(text[i])) result += numbers[(numbers.indexOf(text[i]) + numbers.length - engAlphabetLow.indexOf(key[key_iterator])) % numbers.length];
+            if (engAlphabetLow.includes(text[i])) result += engAlphabetLow[(engAlphabetLow.indexOf(text[i]) + engAlphabetLow.length - engAlphabetLow.indexOf(key[key_iterator])) % engAlphabetLow.length];
+            if (engAlphabetUp.includes(text[i])) result += engAlphabetUp[(engAlphabetUp.indexOf(text[i]) + engAlphabetUp.length - engAlphabetLow.indexOf(key[key_iterator])) % engAlphabetUp.length];
+            if (rusAlphabetLow.includes(text[i])) result += rusAlphabetLow[(rusAlphabetLow.indexOf(text[i]) + rusAlphabetLow.length - engAlphabetLow.indexOf(key[key_iterator])) % rusAlphabetLow.length];
+            if (rusAlphabetUp.includes(text[i])) result += rusAlphabetUp[(rusAlphabetUp.indexOf(text[i]) + rusAlphabetUp.length - engAlphabetLow.indexOf(key[key_iterator])) % rusAlphabetUp.length];
+        }
 
         //Обнуление итератора ключа при достижении длинны самого ключа
         key_iterator = key_iterator + 1 === key.length ? 0 : key_iterator + 1;
@@ -64,7 +78,8 @@ message.addEventListener("input", function(){
     let value = this.value;
     output.textContent = vigenere({
         msg: value,
-        key: key.value
+        key: key.value,
+        flag: 1
     });
 });
 key.addEventListener("keyup", function(){
@@ -72,5 +87,13 @@ key.addEventListener("keyup", function(){
     output.textContent = vigenere({
         msg: message.value,
         key: value
+    });
+});
+decode.addEventListener("input", function(){
+    let value = this.value;
+    output.textContent = vigenere({
+        msg: value,
+        key: key.value,
+        flag: 0
     });
 });
